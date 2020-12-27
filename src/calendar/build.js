@@ -16,11 +16,11 @@ export default function buildCalendar(value) {
   }
   export const getEventList=(day,events,openModal)=>{
    
-    const eventList=events?.filter(event=>event.day.toDate().getTime()===day.toDate().getTime());
+    const eventList=events?.filter(event=>event.day.seconds===day.toDate().getTime()/ 1000);
     console.log(eventList)
     if(eventList?.length>3){
       const list=eventList?.slice(0,3);
-      console.log(list)
+     // console.log(list)
       return(
         <>
         {list?.map((m)=><p>{m.title}</p>)}
@@ -28,8 +28,8 @@ export default function buildCalendar(value) {
         </>
       )
     }else{
-      console.log(events)
-      return(events?.filter(event=>event.day.toDate().getTime()===day.toDate().getTime())?.map((event,index)=>
+      console.log(eventList)
+      return(events?.filter(event=>event.day.seconds===day.toDate().getTime()/ 1000)?.map((event,index)=>
       <p key={index}>{event?.title}</p>
         ))
       

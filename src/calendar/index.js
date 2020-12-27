@@ -24,6 +24,7 @@ export default function Calendar({ value, onChange }) {
   const [endTime,setEndTime]=useState('');
   const [search,setSearch]=useState('');
   const [listOfEvent,setListOfEvent]=useState([]);
+  const [error,setError]=useState('');
   useEffect(() => {
     setCalendar(buildCalendar(value));
 
@@ -120,15 +121,22 @@ export default function Calendar({ value, onChange }) {
     setModalIsOpen_2(true)
   }
   const addEvent=()=>{
+    if(event==='' || day==='' || description===''
+     || startTime==='' || endTime===''){
+      setError('Please fill all the details!!')
+      return;
+    }else{
+    setError('');
      dispatch({
        type:'ADD_EVENTS',
-       payload:{
-         title:event,
-         day:moment(day.toDate()),
-         description:description,
-         startTime:startTime,
-         endTime:endTime
-       }
+       payload:[{
+        title:event,
+        day:day.toDate(),
+        description:description,
+        startTime:startTime,
+        endTime:endTime
+       }]
+       
      })
      db.collection('events')
        .add({
@@ -142,11 +150,13 @@ export default function Calendar({ value, onChange }) {
      setEndTime('');
      setStartTime('')
      setEvent('')
+    }
   }
   console.log(state)
   //const eventOnDay=events.filter(event=>event.time.isSame(day))
   //console.log(eventOnDay);
-  const eventList=state?.filter((state)=>state?.title?.toLowerCase().includes(search?.toLowerCase()))
+  let eventList=state?.filter((state)=>state?.title?.toLowerCase().includes(search?.toLowerCase()));
+  eventList=state?.filter((state)=>state?.description?.toLowerCase().includes(search?.toLowerCase()))
   return (
     
     <>
@@ -194,6 +204,7 @@ export default function Calendar({ value, onChange }) {
                <div className="modal">
               
                  <h4>Add Event</h4>
+                 
                  <span>Title</span>
                  <input className="modal__input"type="text" 
                  placeholder="Enter your title"
@@ -217,7 +228,7 @@ export default function Calendar({ value, onChange }) {
                       onChange={e=>setEndTime(e.target.value)}/>
                       </section>
                  </section>
-                 
+                {error && <p style={{color:'red'}}>{error}</p>}
                  <button onClick={()=>addEvent()} >Add</button>
                  
                </div>
@@ -234,7 +245,7 @@ export default function Calendar({ value, onChange }) {
                </div>
       <section className="Modal_2__section">
       <table>
-                   {state?.filter(event=>moment(event?.day)?.isSame(day))?.map((m,index)=>
+                   {state?.filter(event=>event.day.seconds===day.toDate().getTime()/ 1000)?.map((m,index)=>
                    
                   <tr className="Modal_2__section__info">
                     <td className={"Modal_2__section__title"}><p  key={index}>{m.title}</p></td>
