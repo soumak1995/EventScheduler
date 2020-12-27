@@ -6,13 +6,15 @@
   }
   
   .calendar .header {
-    background-color: lightblue;
+    background-color: #fafafa;
     text-align: center;
     min-height: 2rem;
     line-height: 2rem;
     color: black;
     font-weight: 700;
     display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .calendar .day-names {
@@ -24,17 +26,17 @@
   }
   
   .calendar .body {
-    border: 1px solid lightblue;
+    border: 1px solid gray;
   }
   
   .calendar .header .previous {
-    flex: 1;
+    flex: 0.5;
     text-align: left;
     margin-left: 1rem;
   }
   
   .calendar .header .next {
-    flex: 1;
+    flex: 0.5;
     text-align: right;
     margin-right: 1rem;
   }
@@ -81,10 +83,11 @@
   }
   
   .calendar .day div.selected {
-    background-color:red;
-    color: white;
+    background-color:lightgrey;
+    color: black;
     font-weight: bold;
     height: 100%;
+    width: 100%;
   }
   
   .calendar .day div.today {
@@ -114,15 +117,31 @@
   .Modal{
     position: absolute;
     display: flex;
-    align-items: flex-start;
-
-    height: 300px;
+    align-items: center;
+    justify-content:flex-start;
+     flex-direction: column;
+    height: 350px;
     min-height: 200px;
-    width:200px ;
+    width:250px ;
     background-color: white;
     box-shadow: 0 0 20px 7px rgba(0,0,0,0.2);
     z-index: 103;
-    padding: 20px;
+    text-align: center;
+    outline:none;
+
+  }
+  .Modal_2{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content:flex-start;
+     flex-direction: column;
+    height: 400px;
+    min-height: 200px;
+    width:350px ;
+    background-color: white;
+    box-shadow: 0 0 20px 7px rgba(0,0,0,0.2);
+    z-index: 103;
     text-align: center;
     outline:none;
 
@@ -161,6 +180,7 @@
     justify-content: center;
     flex-direction: column;
     height: 300px;
+    width: 100%;
   }
   .modal__section{
    height: 200px;
@@ -182,3 +202,63 @@
   span{
     margin-right: 10px;
   }
+  a{
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .search{
+      display: flex;
+      align-items: center;
+      justify-self:center;
+      flex:content;
+      margin-left: 10%;
+     
+  }
+  .Modal_header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fafafa;
+    height: 20px;
+    width: 100%;
+    text-align: start;
+    border-bottom: 0.5px solid lightgray;
+  }
+  input[type="text"]::placeholder {  
+                  
+    text-align: center; 
+}
+textarea::placeholder{
+  text-align: center; 
+}
+.Modal_2__section{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 10px;
+  overflow-y: auto;
+}
+.Modal_2__section__info{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.Modal_2__section__title{
+  flex:0.3;
+  margin: 3px;
+}
+.Modal_2__section__description{
+  flex:0.5;
+  margin: 3px;
+  overflow: auto;
+}
+.Modal_2__section__time{
+  flex:0.2;
+  margin: 3px;
+}
+tr:nth-child(even) {background: #CCC}
+tr:nth-child(odd) {background: #FFF}
+.MuiSvgIcon-root{
+  cursor: pointer;
+}

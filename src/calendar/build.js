@@ -1,3 +1,4 @@
+import moment from 'moment'
 export default function buildCalendar(value) {
     const startDay = value.clone().startOf("month").startOf("week");
     const endDay = value.clone().endOf("month").endOf("week");
@@ -13,22 +14,26 @@ export default function buildCalendar(value) {
   
     return calendar;
   }
-  export const getEventList=(day,events)=>{
-    const eventList=events.filter(event=>event.day.isSame(day));
-    if(eventList.length>3){
-      const list=eventList.slice(0,3);
+  export const getEventList=(day,events,openModal)=>{
+   
+    const eventList=events?.filter(event=>event.day.toDate().getTime()===day.toDate().getTime());
+    console.log(eventList)
+    if(eventList?.length>3){
+      const list=eventList?.slice(0,3);
       console.log(list)
       return(
         <>
-        {list.map((m)=><p>{m.title}</p>)}
-         <p>more</p>
+        {list?.map((m)=><p>{m.title}</p>)}
+         <a onClick={openModal}>more</a>
         </>
       )
+    }else{
+      console.log(events)
+      return(events?.filter(event=>event.day.toDate().getTime()===day.toDate().getTime())?.map((event,index)=>
+      <p key={index}>{event?.title}</p>
+        ))
+      
     }
-    // events.filter(event=>event.day.isSame(day))?.map((event,index)=>
-    //                 <p key={index}>{event.title}</p>
-    //                   )
+  
   }
-  // <section className="modal__section">
-  //                  {events.filter(event=>event.time.isSame(day))?.map((m,index)=><div><p key={index}>{m.title}</p></div>)}
-  //                </section>
+  

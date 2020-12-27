@@ -6,22 +6,55 @@ import Modal from 'react-modal';
 import{ useStateValue } from '../StateProvider';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import {getEventList} from './build'
+import CloseIcon from '@material-ui/icons/Close';
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import {db} from '../firebase'
 Modal.setAppElement('#root');
 
+
 export default function Calendar({ value, onChange }) {
-  const [{events},dispatch]=useStateValue();
+  const [state,dispatch]=useStateValue();
   const [calendar, setCalendar] = useState([]);
   const [modalIsOpen,setModalIsOpen]=useState(false);
+  const [modalIsOpen_2,setModalIsOpen_2]=useState(false);
   const [event,setEvent]=useState('');
   const [day,setDay]=useState(moment());
   const [description,setDescription]=useState('')
   const [startTime,setStartTime]=useState('')
   const [endTime,setEndTime]=useState('');
-
+  const [search,setSearch]=useState('');
+  const [listOfEvent,setListOfEvent]=useState([]);
   useEffect(() => {
     setCalendar(buildCalendar(value));
-  }, [value]);
 
+  }, [value]);
+  useEffect(()=>{
+      db.collection('events').onSnapshot((snapshot)=>{  
+        setListOfEvent( 
+           snapshot.docs.map((doc)=>doc.data()))
+         
+        
+      })
+      
+  },[])
+  console.log(listOfEvent)
+  // const sentMessage=e=>{
+  //   e.preventDefault();
+  //  db.collection('channels').doc(ChannelId).collection('message')
+  //  .add({
+  //    timestamp:firebase.firestore.FieldValue.serverTimestamp(),
+  //    message:input,
+  //    user:user
+  //  });
+  //  setInput('');
+  // };
+  useEffect(()=>{
+    dispatch({
+      type:'ADD_EVENTS',
+      payload:listOfEvent
+      
+    })
+  },[listOfEvent])
   function buildCalendar(date) {
     const a = [];
 
@@ -75,32 +108,50 @@ export default function Calendar({ value, onChange }) {
    
   }
   const openModal=()=>{
+    
     setModalIsOpen(true)
+  }
+  const closemodal_2=()=>{
+    setModalIsOpen(false)
+    setModalIsOpen_2(false)
+  }
+  const openModal_2=()=>{
+
+    setModalIsOpen_2(true)
   }
   const addEvent=()=>{
      dispatch({
        type:'ADD_EVENTS',
        payload:{
          title:event,
-         day:day,
+         day:moment(day.toDate()),
          description:description,
          startTime:startTime,
          endTime:endTime
        }
      })
+     db.collection('events')
+       .add({
+           title:event,
+           day:day.toDate(),
+           description:description,
+           startTime:startTime,
+           endTime:endTime
+      });
      setDescription('');
      setEndTime('');
      setStartTime('')
      setEvent('')
   }
-  console.log(events)
+  console.log(state)
   //const eventOnDay=events.filter(event=>event.time.isSame(day))
   //console.log(eventOnDay);
+  const eventList=state?.filter((state)=>state?.title?.toLowerCase().includes(search?.toLowerCase()))
   return (
     
     <>
     <div className="calendar">
-      <Header value={value} onChange={onChange} />
+      <Header value={value} onChange={onChange} search={search} setSearch={setSearch} />
 
       <div className="body">
         <div className="day-names">
@@ -123,7 +174,7 @@ export default function Calendar({ value, onChange }) {
               >
                 <div className={dayStyles(day)}>
                   {day.format("D").toString()}
-                    {getEventList(day,events)}
+                    {getEventList(day,eventList,openModal_2)}
                 </div>
               </div>
             ))}
@@ -136,17 +187,28 @@ export default function Calendar({ value, onChange }) {
              onRequestClose={closemodal}
              className="Modal"
              overlayClassName="Overlay">
+                <div className="Modal_header">
+                 <MoreHorizIcon/>
+                 <CloseIcon onClick={closemodal}/>
+               </div>
                <div className="modal">
+              
                  <h4>Add Event</h4>
                  <span>Title</span>
-                 <input type="text" onChange={(e)=>setEvent(e.target.value)}/>
+                 <input className="modal__input"type="text" 
+                 placeholder="Enter your title"
+                  onChange={(e)=>setEvent(e.target.value)}/>
                  <span>Description</span>
-                 <textarea rows="5" cols="25" value={description}
+                 <textarea rows="5" cols="25"
+                 placeholder="Enter your description"
+                  value={description}
                   onChange={e=>setDescription(e.target.value)}/>
                  <section >
                    <section className="modal__time">
                      <span>Start Time</span>
-                      <input type="time" value={startTime}
+                      <input type="time" 
+                       
+                       value={startTime}
                        onChange={e=>setStartTime(e.target.value)}/>
                    </section>
                    <section className="modal__time">
@@ -160,6 +222,29 @@ export default function Calendar({ value, onChange }) {
                  
                </div>
        
+    </Modal>
+    <Modal
+     isOpen={modalIsOpen_2}
+     onRequestClose={closemodal_2}
+     className="Modal_2"
+     overlayClassName="Overlay">
+       <div className="Modal_header">
+                 <MoreHorizIcon/>
+                 <CloseIcon onClick={closemodal_2}/>
+               </div>
+      <section className="Modal_2__section">
+      <table>
+                   {state?.filter(event=>moment(event?.day)?.isSame(day))?.map((m,index)=>
+                   
+                  <tr className="Modal_2__section__info">
+                    <td className={"Modal_2__section__title"}><p  key={index}>{m.title}</p></td>
+                   <td className={"Modal_2__section__description"}><p  >{m.description}</p></td>
+                   <td className={"Modal_2__section__time"} > <p  >{m.startTime}</p></td>--
+                  <td className={"Modal_2__section__time"} ><p >{m.endTime}</p></td> </tr>
+                   
+          )}
+          </table>
+                 </section>
     </Modal>
     </>
   );

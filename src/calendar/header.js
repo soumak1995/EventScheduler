@@ -1,7 +1,8 @@
 import React from "react";
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-export default function CalendarHeader({ value, onChange }) {
+import SearchIcon from '@material-ui/icons/Search';
+export default function CalendarHeader({ value, onChange,setSearch,search}) {
   function currMonthName() {
     return value.format("MMMM");
   }
@@ -32,6 +33,10 @@ export default function CalendarHeader({ value, onChange }) {
       </div>
       <div className="current">
         {currMonthName()} {currYear()}
+      </div>
+      <div className="search">
+        <SearchIcon />
+        <input type="text" placeholder="Search your event"  onChange={e=>setSearch(e.target.value)}/>
       </div>
       <div className="next" onClick={() => onChange(nextMonth())}>
          <ChevronRightIcon fontSize="large"/>
