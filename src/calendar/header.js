@@ -1,5 +1,6 @@
 import React from "react";
-
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 export default function CalendarHeader({ value, onChange }) {
   function currMonthName() {
     return value.format("MMMM");
@@ -27,13 +28,13 @@ export default function CalendarHeader({ value, onChange }) {
         className="previous"
         onClick={() => !thisMonth() && onChange(prevMonth())}
       >
-        {!thisMonth() ? String.fromCharCode(171) : null}
+        {!thisMonth() ? <ChevronLeftIcon fontSize="large"/>: null}
       </div>
       <div className="current">
         {currMonthName()} {currYear()}
       </div>
       <div className="next" onClick={() => onChange(nextMonth())}>
-        {String.fromCharCode(187)}
+         <ChevronRightIcon fontSize="large"/>
       </div>
     </div>
   );

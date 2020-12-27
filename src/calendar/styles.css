@@ -64,7 +64,7 @@
     box-sizing: border-box;
     z-index: 1;
     text-align: center;
- 
+    overflow-y: auto;
   }
   
   .calendar .day div {
@@ -165,6 +165,20 @@
   .modal__section{
    height: 200px;
    width: 200px;
-   
-   overflow-y: scroll;
+
+   overflow-y: auto;
+  }
+  .week{
+    height: 100px;
+  }
+  
+  .modal__time{
+     display: flex;
+     align-items:center ;
+     justify-content: space-between;
+     margin-top: 5px;
+     margin-bottom: 5px;
+  }
+  span{
+    margin-right: 10px;
   }

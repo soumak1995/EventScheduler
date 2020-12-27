@@ -3,13 +3,21 @@ import moment from "moment";
 import Header from "./header";
 import "./styles.css";
 import Modal from 'react-modal';
-import{ useStateValue } from '../StateProvider'
+import{ useStateValue } from '../StateProvider';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import {getEventList} from './build'
+Modal.setAppElement('#root');
+
 export default function Calendar({ value, onChange }) {
   const [{events},dispatch]=useStateValue();
   const [calendar, setCalendar] = useState([]);
   const [modalIsOpen,setModalIsOpen]=useState(false);
   const [event,setEvent]=useState('');
-  const [day,setDay]=useState(moment())
+  const [day,setDay]=useState(moment());
+  const [description,setDescription]=useState('')
+  const [startTime,setStartTime]=useState('')
+  const [endTime,setEndTime]=useState('');
+
   useEffect(() => {
     setCalendar(buildCalendar(value));
   }, [value]);
@@ -39,6 +47,9 @@ export default function Calendar({ value, onChange }) {
   function beforeToday(day) {
     return moment(day).isBefore(new Date(), "day");
   }
+  function AfterMonth(day) {
+    return moment(day).isAfter(new Date(), "month");
+  }
 
   function isToday(day) {
     return moment(new Date()).isSame(day, "day");
@@ -46,6 +57,7 @@ export default function Calendar({ value, onChange }) {
 
   function dayStyles(day) {
     if (beforeToday(day)) return "before";
+  //  if (AfterMonth(day)) return "before";
     if (isSelected(day)) return "selected";
     if (isToday(day)) return "today";
     return "";
@@ -70,13 +82,20 @@ export default function Calendar({ value, onChange }) {
        type:'ADD_EVENTS',
        payload:{
          title:event,
-         time:day
+         day:day,
+         description:description,
+         startTime:startTime,
+         endTime:endTime
        }
      })
+     setDescription('');
+     setEndTime('');
+     setStartTime('')
+     setEvent('')
   }
   console.log(events)
-  const eventOnDay=events.filter(event=>event.time.isSame(day))
-  console.log(eventOnDay);
+  //const eventOnDay=events.filter(event=>event.time.isSame(day))
+  //console.log(eventOnDay);
   return (
     
     <>
@@ -90,7 +109,7 @@ export default function Calendar({ value, onChange }) {
           ))}
         </div>
         {calendar.map((week, wi) => (
-          <div key={wi}>
+          <div key={wi} >
             {week.map((day, di) => (
               <div
                 key={di}
@@ -100,14 +119,11 @@ export default function Calendar({ value, onChange }) {
                   onChange(day);
                   setDay(day);
                   openModal();
-
                 }}
               >
                 <div className={dayStyles(day)}>
                   {day.format("D").toString()}
-                  {events.filter(event=>event.time.isSame(day))?.map((event,index)=>
-                    <p key={index}>{event.title}</p>
-                    )}
+                    {getEventList(day,events)}
                 </div>
               </div>
             ))}
@@ -122,11 +138,26 @@ export default function Calendar({ value, onChange }) {
              overlayClassName="Overlay">
                <div className="modal">
                  <h4>Add Event</h4>
+                 <span>Title</span>
                  <input type="text" onChange={(e)=>setEvent(e.target.value)}/>
-                 <button onClick={()=>addEvent()} >Add</button>
-                 <section className="modal__section">
-                   {events?.map((m,index)=><div><p key={index}>{m.title}</p></div>)}
+                 <span>Description</span>
+                 <textarea rows="5" cols="25" value={description}
+                  onChange={e=>setDescription(e.target.value)}/>
+                 <section >
+                   <section className="modal__time">
+                     <span>Start Time</span>
+                      <input type="time" value={startTime}
+                       onChange={e=>setStartTime(e.target.value)}/>
+                   </section>
+                   <section className="modal__time">
+                      <span>End Time</span>
+                      <input type="time" value={endTime} 
+                      onChange={e=>setEndTime(e.target.value)}/>
+                      </section>
                  </section>
+                 
+                 <button onClick={()=>addEvent()} >Add</button>
+                 
                </div>
        
     </Modal>
