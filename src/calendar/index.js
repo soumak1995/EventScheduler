@@ -39,16 +39,7 @@ export default function Calendar({ value, onChange }) {
       
   },[])
   console.log(listOfEvent)
-  // const sentMessage=e=>{
-  //   e.preventDefault();
-  //  db.collection('channels').doc(ChannelId).collection('message')
-  //  .add({
-  //    timestamp:firebase.firestore.FieldValue.serverTimestamp(),
-  //    message:input,
-  //    user:user
-  //  });
-  //  setInput('');
-  // };
+  
   useEffect(()=>{
     dispatch({
       type:'ADD_EVENTS',
@@ -120,13 +111,15 @@ export default function Calendar({ value, onChange }) {
 
     setModalIsOpen_2(true)
   }
-  const addEvent=()=>{
+  const addEvent=(e)=>{
+    e.preventDefault();
     if(event==='' || day==='' || description===''
      || startTime==='' || endTime===''){
       setError('Please fill all the details!!')
       return;
     }else{
     setError('');
+    setModalIsOpen(false)
      dispatch({
        type:'ADD_EVENTS',
        payload:[{
@@ -155,8 +148,8 @@ export default function Calendar({ value, onChange }) {
   console.log(state)
   //const eventOnDay=events.filter(event=>event.time.isSame(day))
   //console.log(eventOnDay);
-  let eventList=state?.filter((state)=>state?.title?.toLowerCase().includes(search?.toLowerCase()));
-  eventList=state?.filter((state)=>state?.description?.toLowerCase().includes(search?.toLowerCase()))
+  let eventList=state?.filter((state)=>state?.title?.toLowerCase().includes(search?.toLowerCase())
+  ||state?.description?.toLowerCase().includes(search?.toLowerCase()));
   return (
     
     <>
@@ -229,7 +222,7 @@ export default function Calendar({ value, onChange }) {
                       </section>
                  </section>
                 {error && <p style={{color:'red'}}>{error}</p>}
-                 <button onClick={()=>addEvent()} >Add</button>
+                 <button onClick={addEvent} >Add</button>
                  
                </div>
        
